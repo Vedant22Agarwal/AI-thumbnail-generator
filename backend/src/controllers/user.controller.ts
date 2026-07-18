@@ -4,7 +4,7 @@ import bcrypt from "bcrypt";
 import Thumbnail from "../models/thumbnail.models.js";
 
 // Register User
-export const registerUser = async (req: Request,res: Response): Promise<Response | void> => {
+export const registerUser = async (req: Request, res: Response): Promise<Response | void> => {
     try {
         const { name, email, password } = req.body;
 
@@ -59,7 +59,7 @@ export const registerUser = async (req: Request,res: Response): Promise<Response
 };
 
 // Login User
-export const loginUser = async (req: Request,res: Response): Promise<Response | void> => {
+export const loginUser = async (req: Request, res: Response): Promise<Response | void> => {
     try {
         const { email, password } = req.body;
 
@@ -94,13 +94,22 @@ export const loginUser = async (req: Request,res: Response): Promise<Response | 
         req.session.isLoggedIn = true;
         req.session.userId = user._id.toString();
 
-        return res.status(200).json({
-            message: "Login Successfully",
-            user: {
-                _id: user._id,
-                name: user.name,
-                email: user.email,
-            },
+        req.session.save((err) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).json({
+                    message: "Failed to save session",
+                });
+            }
+
+            return res.status(200).json({
+                message: "Login Successfully",
+                user: {
+                    _id: user._id,
+                    name: user.name,
+                    email: user.email,
+                },
+            });
         });
     } catch (error: any) {
         console.error(error);
@@ -112,34 +121,34 @@ export const loginUser = async (req: Request,res: Response): Promise<Response | 
 };
 
 // Logout User
-export const logoutUser = async (req: Request,res: Response): Promise<Response | void> => {
-req.session.destroy((error) => {
-    if (error) {
-      console.error(error);
+export const logoutUser = async (req: Request, res: Response): Promise<Response | void> => {
+    req.session.destroy((error) => {
+        if (error) {
+            console.error(error);
 
-      return res.status(500).json({
-        message: "Internal Server Error",
-      });
-    }
+            return res.status(500).json({
+                message: "Internal Server Error",
+            });
+        }
 
-    res.clearCookie("connect.sid");
+        res.clearCookie("connect.sid");
 
-    return res.status(200).json({
-      message: "Logout Successful",
+        return res.status(200).json({
+            message: "Logout Successful",
+        });
     });
-  });
 };
 
-export const verifyUser = async (req: Request,res: Response): Promise<Response | void> => {
+export const verifyUser = async (req: Request, res: Response): Promise<Response | void> => {
     try {
-        const {userId} = req.session;
+        const { userId } = req.session;
         const user = await User.findById(userId).select("-password");
-        if(!user){
+        if (!user) {
             res.status(400).json({
-                message:"Invalid User"
+                message: "Invalid User"
             })
         }
-        res.status(200).json({user})
+        res.status(200).json({ user })
     } catch (error: any) {
         console.error(error);
 
@@ -151,7 +160,7 @@ export const verifyUser = async (req: Request,res: Response): Promise<Response |
 
 
 // all thumnail for a user
-export const getAllThumnail = async (req: Request,res: Response): Promise<Response | void> => {
+export const getAllThumnail = async (req: Request, res: Response): Promise<Response | void> => {
     try {
         const { userId } = req.session;
 
@@ -170,7 +179,7 @@ export const getAllThumnail = async (req: Request,res: Response): Promise<Respon
     }
 };
 
-export const getSingleThumbnail = async (req: Request,res: Response): Promise<Response | void> => {
+export const getSingleThumbnail = async (req: Request, res: Response): Promise<Response | void> => {
     try {
         const { id } = req.params;
         const { userId } = req.session;

@@ -14,6 +14,8 @@ declare module "express-session" {
 await connectDB();
 const app = express();
 
+app.set("trust proxy", 1);
+
 // Middleware
 const allowedOrigins = [process.env.FRONTEND_URL!].filter(Boolean);
 app.use(
@@ -27,8 +29,9 @@ app.use(
     secret: process.env.SESSION_SECRET as string,
     resave: false,
     saveUninitialized: false,
+    proxy: true,
     cookie: {
-      maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+      maxAge: 1000 * 60 * 60 * 24 * 7,
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
