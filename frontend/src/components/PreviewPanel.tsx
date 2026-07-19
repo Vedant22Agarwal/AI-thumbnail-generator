@@ -3,17 +3,14 @@ import {
   DownloadIcon,
   ImageIcon,
   Loader2Icon,
-  PencilIcon,
 } from "lucide-react";
 
 type PreviewPanelProps = {
   thumbnail: IThumbnail | null;
   isLoading: boolean;
   aspectRatio: AspectRatio;
-
-  showEdit?: boolean;
-  onEdit?: () => void;
 };
+
 const PreviewPanel = ({
   thumbnail,
   isLoading,
@@ -29,15 +26,11 @@ const PreviewPanel = ({
     if (!thumbnail?.image_url) return;
 
     const link = document.createElement("a");
-    link.href = thumbnail?.image_url.replace('/upload', "/upload/fl_attachment");
+    link.href = thumbnail?.image_url.replace('/upload',"/upload/fl_attachment");
     document.body.appendChild(link);
     link.click();
     link.remove();
   };
-
-  const onEdit = () => {
-
-  }
 
   return (
     <div className="mx-auto w-full max-w-2xl rounded-2xl border border-white/10 bg-white/5 p-4 shadow-2xl backdrop-blur-xl">
@@ -70,7 +63,7 @@ const PreviewPanel = ({
               className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
             />
 
-            <div className="absolute inset-0 flex items-end justify-center gap-3 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+            <div className="absolute inset-0 flex items-end justify-center bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100">
               <button
                 onClick={onDownload}
                 type="button"
@@ -78,14 +71,6 @@ const PreviewPanel = ({
               >
                 <DownloadIcon className="size-4" />
                 Download Thumbnail
-              </button>
-              <button
-                onClick={onEdit}
-                type="button"
-                className="mb-6 flex items-center gap-2 rounded-xl bg-pink-500 px-5 py-3 text-sm font-semibold text-white shadow-lg transition hover:scale-105 active:scale-95"
-              >
-                <PencilIcon className="size-4" />
-                Edit Thumbnail
               </button>
             </div>
           </div>

@@ -27,8 +27,6 @@ const Generate = () => {
   const [style, setstyle] = useState<ThumbnailStyle>("Bold & Graphic");
   const [styleDropDownOpen, setStyleDropDownOpen] = useState(false);
 
-  const [isEditorOpen, setIsEditorOpen] = useState(false);
-
   const handleGenerate = async () => {
     if (!isLoggedIn) {
       return toast.error("Please login to generate thumbnails.");
@@ -54,7 +52,7 @@ const Generate = () => {
     }
   };
 
-
+  
 
   const fetchThumbnail = async () => {
     try {
@@ -89,13 +87,13 @@ const Generate = () => {
 
   useEffect(() => {
     if ((!id) && thumbnail) {
-      setThumbnail(null);
-      setTitle("");
-      setAdditionalDetails("");
-      setAspectRatio("16:9");
-      setColorSchema(colorSchemes[0].id);
-      setstyle("Bold & Graphic");
-      setLoading(false);
+     setThumbnail(null);
+    setTitle("");
+    setAdditionalDetails("");
+    setAspectRatio("16:9");
+    setColorSchema(colorSchemes[0].id);
+    setstyle("Bold & Graphic");
+    setLoading(false);
 
     }
   }, [pathname])
@@ -133,18 +131,18 @@ const Generate = () => {
                 </div>
                 {/* button */}
                 {!id && (
-                  <button
-                    onClick={handleGenerate}
-                    disabled={loading}
-                    className="w-full rounded-xl bg-linear-to-b from-pink-500 to-pink-700 py-3.5 text-[15px] font-medium transition-all
+<button
+  onClick={handleGenerate}
+  disabled={loading}
+  className="w-full rounded-xl bg-linear-to-b from-pink-500 to-pink-700 py-3.5 text-[15px] font-medium transition-all
              hover:from-pink-700 hover:to-pink-800
              disabled:cursor-not-allowed
              disabled:opacity-60
              disabled:hover:from-pink-500
              disabled:hover:to-pink-700"
-                  >
-                    {loading ? "Generating..." : "Generate Thumbnail"}
-                  </button>
+>
+  {loading ? "Generating..." : "Generate Thumbnail"}
+</button>
                 )}
               </div>
             </div>
@@ -152,13 +150,7 @@ const Generate = () => {
             <div className="">
               <div className="p-6 rounded-2xl bg-white/8 border border-white/10 shadow-xl">
                 <h2 className='text-lg font-semibold text-zinc-100 mb-4'>Preview</h2>
-                <PreviewPanel
-                  thumbnail={thumbnail}
-                  isLoading={loading}
-                  aspectRatio={aspectRatio}
-                  showEdit={!!id}
-                  onEdit={() => setIsEditorOpen(true)}
-                />
+                <PreviewPanel thumbnail={thumbnail} isLoading={loading} aspectRatio={aspectRatio} />
               </div>
             </div>
           </div>
