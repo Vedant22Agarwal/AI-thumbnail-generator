@@ -206,3 +206,23 @@ export const getSingleThumbnail = async (req: Request, res: Response): Promise<R
         });
     }
 };
+
+
+
+export const getStats = async (req: Request, res: Response) => {
+    try {
+        const [users, thumbnails] = await Promise.all([
+            User.countDocuments(),
+            Thumbnail.countDocuments(),
+        ]);
+
+        res.status(200).json({
+            users,
+            thumbnails,
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "Failed to fetch stats",
+        });
+    }
+};

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getAllThumnail, getSingleThumbnail, loginUser, logoutUser, registerUser, verifyUser } from '../controllers/user.controller.js';
+import { getAllThumnail, getSingleThumbnail, getStats, loginUser, logoutUser, registerUser, verifyUser } from '../controllers/user.controller.js';
 import protectUser from '../middleware/auth.middleware.js';
 const router = Router();
 
@@ -13,7 +13,7 @@ router.route("/thumbnails").get(protectUser, getAllThumnail);
 router.route("/thumbnail/:id").get(protectUser, getSingleThumbnail);
 
 
-
+router.route("/stats").get(getStats)
 
 
 export default router;

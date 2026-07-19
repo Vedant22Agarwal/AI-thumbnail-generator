@@ -10,6 +10,8 @@ import YtPreview from "./pages/YtPreview.tsx";
 import Login from "./components/Login.tsx";
 import { useEffect } from "react";
 import { Toaster } from 'react-hot-toast';
+import About from "./pages/About.tsx";
+import Contact from "./pages/Contact.tsx";
 
 export default function App() {
     const { pathname } = useLocation();
@@ -58,8 +60,10 @@ export default function App() {
                 <Route path="/generate" element={<Generate />} />
                 <Route path="/generate/:id" element={<Generate />} />
                 <Route path="/my-generation" element={<MyGeneration />} />
+                <Route path="/about" element={<About />} />
                 <Route path="/preview" element={<YtPreview />} />
                 <Route path="/login" element={<Login />} />
+                <Route path="/contact" element={<Contact />} />
 
 
 

@@ -25,10 +25,10 @@ export default function Navbar() {
                     <Link to = "/" className="hover:text-pink-300 transition">Home</Link>
                     <Link to = "/generate" className="hover:text-pink-300 transition">Generate</Link>
                     {
-                        isLoggedIn? <Link to = "/my-generation" className="hover:text-pink-300 transition">My Generations</Link> : <Link to = "#" className="hover:text-pink-300 transition">About</Link>
+                        isLoggedIn? <Link to = "/my-generation" className="hover:text-pink-300 transition">My Generations</Link> : <Link to = "/about" className="hover:text-pink-300 transition">About</Link>
                     }
                     
-                    <Link to = "#" className="hover:text-pink-300 transition">Contact us</Link>
+                    <Link to = "/contact" className="hover:text-pink-300 transition">Contact us</Link>
                 </div>
 
                <div className="flex items-center gap-2">
@@ -53,8 +53,8 @@ export default function Navbar() {
             <div className={`fixed inset-0 z-100 bg-black/40 backdrop-blur flex flex-col items-center justify-center text-lg gap-8 md:hidden transition-transform duration-400 ${isOpen ? "translate-x-0" : "-translate-x-full"}`}>
                 <Link onClick={() => setIsOpen(false)} to = "/" className="hover:text-pink-300 transition">Home</Link>
                     <Link onClick={() => setIsOpen(false)} to = "/generate" className="hover:text-pink-300 transition">Generate</Link>
-                    {isLoggedIn ? <Link onClick={() => setIsOpen(false)} to = "/my-generation" className="hover:text-pink-300 transition">My Generations</Link> : <Link onClick={() => setIsOpen(false)} to = "#" className="hover:text-pink-300 transition">About</Link>}
-                    <Link onClick={() => setIsOpen(false)} to = "#" className="hover:text-pink-300 transition">Contact us</Link>
+                    {isLoggedIn ? <Link onClick={() => setIsOpen(false)} to = "/my-generation" className="hover:text-pink-300 transition">My Generations</Link> : <Link onClick={() => setIsOpen(false)} to = "/about" className="hover:text-pink-300 transition">About</Link>}
+                    <Link onClick={() => setIsOpen(false)} to = "/contact" className="hover:text-pink-300 transition">Contact us</Link>
 
                     {
                         isLoggedIn ? (
