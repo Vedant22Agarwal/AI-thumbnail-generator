@@ -9,12 +9,16 @@ type PreviewPanelProps = {
   thumbnail: IThumbnail | null;
   isLoading: boolean;
   aspectRatio: AspectRatio;
+  isEditing: boolean;
+  onEdit: () => void;
 };
 
 const PreviewPanel = ({
   thumbnail,
   isLoading,
   aspectRatio,
+  isEditing,
+  onEdit,
 }: PreviewPanelProps) => {
   const aspectClasses: Record<AspectRatio, string> = {
     "16:9": "aspect-video",
@@ -26,7 +30,7 @@ const PreviewPanel = ({
     if (!thumbnail?.image_url) return;
 
     const link = document.createElement("a");
-    link.href = thumbnail?.image_url.replace('/upload',"/upload/fl_attachment");
+    link.href = thumbnail?.image_url.replace('/upload', "/upload/fl_attachment");
     document.body.appendChild(link);
     link.click();
     link.remove();
@@ -64,14 +68,26 @@ const PreviewPanel = ({
             />
 
             <div className="absolute inset-0 flex items-end justify-center bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-              <button
-                onClick={onDownload}
-                type="button"
-                className="mb-6 flex items-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-semibold text-black shadow-lg transition hover:scale-105 active:scale-95"
-              >
-                <DownloadIcon className="size-4" />
-                Download Thumbnail
-              </button>
+              <div className="mb-6 flex gap-3">
+                <button
+                  onClick={onDownload}
+                  type="button"
+                  className="flex items-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-semibold text-black shadow-lg transition hover:scale-105 active:scale-95"
+                >
+                  <DownloadIcon className="size-4" />
+                  Download
+                </button>
+
+                {!isEditing && (
+                  <button
+                    onClick={onEdit}
+                    type="button"
+                    className="flex items-center gap-2 rounded-xl bg-pink-600 px-5 py-3 text-sm font-semibold text-white shadow-lg transition hover:bg-pink-700 hover:scale-105 active:scale-95"
+                  >
+                    Edit
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         )}

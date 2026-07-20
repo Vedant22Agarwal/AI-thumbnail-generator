@@ -9,6 +9,8 @@ import PreviewPanel from '../components/PreviewPanel.tsx';
 import useAuthContext from '../contexts/authContext.tsx';
 import toast from 'react-hot-toast';
 import api from '../config/api.ts';
+
+
 const Generate = () => {
   const { id } = useParams();
 
@@ -26,6 +28,8 @@ const Generate = () => {
   const [colorSchema, setColorSchema] = useState<string>(colorSchemes[0].id);
   const [style, setstyle] = useState<ThumbnailStyle>("Bold & Graphic");
   const [styleDropDownOpen, setStyleDropDownOpen] = useState(false);
+
+  const [isEditing, setIsEditing] = useState(false);
 
   const handleGenerate = async () => {
     if (!isLoggedIn) {
@@ -52,7 +56,7 @@ const Generate = () => {
     }
   };
 
-  
+
 
   const fetchThumbnail = async () => {
     try {
@@ -73,6 +77,40 @@ const Generate = () => {
       toast.error(error?.response?.data?.message || error.message)
     }
   };
+  const handleUpdate = async () => {
+    if (!thumbnail) return;
+
+    if (!title.trim()) {
+      return toast.error("Please enter a title.");
+    }
+
+    try {
+      setLoading(true);
+
+      const payload = {
+        title,
+        prompt: additionalDetails,
+        style,
+        aspect_ratio: aspectRatio,
+        color_scheme: colorSchema,
+        text_overlay: true,
+      };
+
+      const { data } = await api.put(
+        `/api/thumbnails/${thumbnail._id}`,
+        payload
+      );
+
+      setThumbnail(data.thumbnail);
+      setLoading(false);
+      setIsEditing(false);
+
+      toast.success(data.message);
+    } catch (error: any) {
+      setLoading(false);
+      toast.error(error?.response?.data?.message || error.message);
+    }
+  };
   useEffect(() => {
     if (isLoggedIn && id) {
       fetchThumbnail();
@@ -87,13 +125,13 @@ const Generate = () => {
 
   useEffect(() => {
     if ((!id) && thumbnail) {
-     setThumbnail(null);
-    setTitle("");
-    setAdditionalDetails("");
-    setAspectRatio("16:9");
-    setColorSchema(colorSchemes[0].id);
-    setstyle("Bold & Graphic");
-    setLoading(false);
+      setThumbnail(null);
+      setTitle("");
+      setAdditionalDetails("");
+      setAspectRatio("16:9");
+      setColorSchema(colorSchemes[0].id);
+      setstyle("Bold & Graphic");
+      setLoading(false);
 
     }
   }, [pathname])
@@ -104,7 +142,7 @@ const Generate = () => {
         <main className='max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-28 lg:pb-8'>
           <div className="grid lg:grid-cols-[400px_1fr] gap-8">
             {/* Left side */}
-            <div className={`space-y-6 ${id && 'pointer-events-none'}`}>
+            <div className={`space-y-6 ${id && !isEditing && 'pointer-events-none'}`}>
               <div className="p-6 rounded-2xl bg-white/8 border border-white/12 shadow-xl space-y-6">
                 <div className="">
                   <h2 className='text-xl font-bold text-zinc-100 mb-1'>Create Your Thumbnail</h2>
@@ -130,19 +168,25 @@ const Generate = () => {
                   </div>
                 </div>
                 {/* button */}
-                {!id && (
-<button
-  onClick={handleGenerate}
-  disabled={loading}
-  className="w-full rounded-xl bg-linear-to-b from-pink-500 to-pink-700 py-3.5 text-[15px] font-medium transition-all
-             hover:from-pink-700 hover:to-pink-800
-             disabled:cursor-not-allowed
-             disabled:opacity-60
-             disabled:hover:from-pink-500
-             disabled:hover:to-pink-700"
->
-  {loading ? "Generating..." : "Generate Thumbnail"}
-</button>
+                {(!id || isEditing) && (
+                  <button
+                    onClick={isEditing ? handleUpdate : handleGenerate}
+                    disabled={loading}
+                    className="w-full rounded-xl bg-linear-to-b from-pink-500 to-pink-700 py-3.5 text-[15px] font-medium transition-all
+      hover:from-pink-700 hover:to-pink-800
+      disabled:cursor-not-allowed
+      disabled:opacity-60
+      disabled:hover:from-pink-500
+      disabled:hover:to-pink-700"
+                  >
+                    {loading
+                      ? isEditing
+                        ? "Updating..."
+                        : "Generating..."
+                      : isEditing
+                        ? "Update Thumbnail"
+                        : "Generate Thumbnail"}
+                  </button>
                 )}
               </div>
             </div>
@@ -150,7 +194,13 @@ const Generate = () => {
             <div className="">
               <div className="p-6 rounded-2xl bg-white/8 border border-white/10 shadow-xl">
                 <h2 className='text-lg font-semibold text-zinc-100 mb-4'>Preview</h2>
-                <PreviewPanel thumbnail={thumbnail} isLoading={loading} aspectRatio={aspectRatio} />
+                <PreviewPanel
+                  thumbnail={thumbnail}
+                  isLoading={loading}
+                  aspectRatio={aspectRatio}
+                  isEditing={isEditing}
+                  onEdit={() => setIsEditing(true)}
+                />
               </div>
             </div>
           </div>
