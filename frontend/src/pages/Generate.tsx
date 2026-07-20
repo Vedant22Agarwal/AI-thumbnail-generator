@@ -65,7 +65,8 @@ const Generate = () => {
       if (data?.thumbnail) {
         setThumbnail(data?.thumbnail as IThumbnail)
 
-        setLoading(!data?.thumbnail?.image_url)
+        // setLoading(!data?.thumbnail?.image_url)
+        setLoading(data.thumbnail.isGenerating);
 
         setTitle(data?.thumbnail?.title)
         setAdditionalDetails(data?.thumbnail?.user_prompt)
@@ -77,6 +78,8 @@ const Generate = () => {
       toast.error(error?.response?.data?.message || error.message)
     }
   };
+
+
   const handleUpdate = async () => {
     if (!thumbnail) return;
 
@@ -103,14 +106,19 @@ const Generate = () => {
 
       setThumbnail(data.thumbnail);
       setIsEditing(false);
+      
+      // FIX: Rely on the backend to tell us if we should still be loading
+      setLoading(data.thumbnail.isGenerating);
 
       toast.success(data.message);
     } catch (error: any) {
+      setLoading(false); // Only stop loading manually on error
       toast.error(error?.response?.data?.message || error.message);
-    } finally {
-      setLoading(false);
-    }
+    } 
+    // FIX: Removed the `finally` block
   };
+
+
   const handleCancelEdit = () => {
     if (!thumbnail) return;
 
@@ -122,18 +130,30 @@ const Generate = () => {
 
     setIsEditing(false);
   };
+  // 1. Initial fetch on mount or URL change
   useEffect(() => {
     if (isLoggedIn && id) {
       fetchThumbnail();
     }
+  }, [id, isLoggedIn]); // Only run when ID or auth changes
 
+  // 2. Polling mechanism
+  useEffect(() => {
+    let interval: ReturnType<typeof setInterval>;
+    
+    // Only poll if we are actively loading an image and NOT editing
     if (id && loading && isLoggedIn && !isEditing) {
-      const interval = setInterval(() => {
+      interval = setInterval(() => {
         fetchThumbnail();
       }, 5000);
-
-      return () => clearInterval(interval);
     }
+
+    // Cleanup interval on unmount or state change
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
   }, [id, isLoggedIn, loading, isEditing]);
 
   useEffect(() => {
