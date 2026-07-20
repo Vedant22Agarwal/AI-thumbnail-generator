@@ -102,13 +102,13 @@ const Generate = () => {
       );
 
       setThumbnail(data.thumbnail);
-      setLoading(false);
       setIsEditing(false);
 
       toast.success(data.message);
     } catch (error: any) {
-      setLoading(false);
       toast.error(error?.response?.data?.message || error.message);
+    } finally {
+      setLoading(false);
     }
   };
   const handleCancelEdit = () => {

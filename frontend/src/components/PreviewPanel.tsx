@@ -86,7 +86,7 @@ const PreviewPanel = ({
                     type="button"
                     className="flex items-center gap-2 rounded-xl bg-pink-600 px-5 py-3 text-sm font-semibold text-white shadow-lg transition hover:bg-pink-700 hover:scale-105 active:scale-95"
                   >
-                    Edit
+                    Edit Thumbnail
                   </button>
                 ) : (
                   <button
@@ -94,7 +94,7 @@ const PreviewPanel = ({
                     type="button"
                     className="flex items-center gap-2 rounded-xl bg-zinc-700 px-5 py-3 text-sm font-semibold text-white shadow-lg transition hover:bg-zinc-600 hover:scale-105 active:scale-95"
                   >
-                    Cancel
+                    Cancel Updates
                   </button>
                 )}
               </div>
