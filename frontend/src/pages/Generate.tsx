@@ -111,6 +111,17 @@ const Generate = () => {
       toast.error(error?.response?.data?.message || error.message);
     }
   };
+  const handleCancelEdit = () => {
+    if (!thumbnail) return;
+
+    setTitle(thumbnail.title);
+    setAspectRatio(thumbnail.aspect_ratio);
+    setAdditionalDetails(thumbnail.user_prompt ?? "");
+    setColorSchema(thumbnail.color_scheme ?? colorSchemes[0].id);
+    setstyle(thumbnail.style);
+
+    setIsEditing(false);
+  };
   useEffect(() => {
     if (isLoggedIn && id) {
       fetchThumbnail();
@@ -200,6 +211,7 @@ const Generate = () => {
                   aspectRatio={aspectRatio}
                   isEditing={isEditing}
                   onEdit={() => setIsEditing(true)}
+                  onCancel={handleCancelEdit}
                 />
               </div>
             </div>

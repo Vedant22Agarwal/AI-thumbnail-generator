@@ -11,6 +11,7 @@ type PreviewPanelProps = {
   aspectRatio: AspectRatio;
   isEditing: boolean;
   onEdit: () => void;
+  onCancel: () => void;
 };
 
 const PreviewPanel = ({
@@ -19,6 +20,7 @@ const PreviewPanel = ({
   aspectRatio,
   isEditing,
   onEdit,
+  onCancel,
 }: PreviewPanelProps) => {
   const aspectClasses: Record<AspectRatio, string> = {
     "16:9": "aspect-video",
@@ -78,13 +80,21 @@ const PreviewPanel = ({
                   Download
                 </button>
 
-                {!isEditing && (
+                {!isEditing ? (
                   <button
                     onClick={onEdit}
                     type="button"
                     className="flex items-center gap-2 rounded-xl bg-pink-600 px-5 py-3 text-sm font-semibold text-white shadow-lg transition hover:bg-pink-700 hover:scale-105 active:scale-95"
                   >
                     Edit
+                  </button>
+                ) : (
+                  <button
+                    onClick={onCancel}
+                    type="button"
+                    className="flex items-center gap-2 rounded-xl bg-zinc-700 px-5 py-3 text-sm font-semibold text-white shadow-lg transition hover:bg-zinc-600 hover:scale-105 active:scale-95"
+                  >
+                    Cancel
                   </button>
                 )}
               </div>
