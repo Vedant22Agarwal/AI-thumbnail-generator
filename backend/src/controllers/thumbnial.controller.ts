@@ -224,6 +224,101 @@ export const generateThumbnail = async (
 };
 
 /* ============================================================
+   UPDATE THUMBNAIL
+============================================================ */
+
+export const updateThumbnail = async (
+  req: Request,
+  res: Response,
+): Promise<Response | void> => {
+  let thumbnail: any = null;
+
+  try {
+    const { id } = req.params;
+    const { userId } = req.session;
+
+    thumbnail = await Thumbnail.findOne({
+      _id: id,
+      userId,
+    });
+
+    if (!thumbnail) {
+      return res.status(404).json({
+        message: "Thumbnail not found.",
+      });
+    }
+
+    const {
+      title,
+      prompt: user_prompt = "",
+      style,
+      aspect_ratio = "16:9",
+      color_scheme,
+      text_overlay = true,
+    } = req.body;
+
+    if (!title || !style || !color_scheme) {
+      return res.status(400).json({
+        message: "Title, style and color scheme are required.",
+      });
+    }
+
+    // Show loading state while regenerating
+    thumbnail.isGenerating = true;
+    await thumbnail.save();
+
+    // Generate new thumbnail
+    const result = await generateThumbnailImage({
+      title,
+      user_prompt,
+      style,
+      aspect_ratio,
+      color_scheme,
+      text_overlay,
+    });
+
+    // Delete previous Cloudinary image
+    if (thumbnail.public_id) {
+      await cloudinary.uploader.destroy(thumbnail.public_id);
+    }
+
+    // Update thumbnail document
+    thumbnail.title = title;
+    thumbnail.user_prompt = user_prompt;
+    thumbnail.style = style;
+    thumbnail.aspect_ratio = aspect_ratio;
+    thumbnail.color_scheme = color_scheme;
+    thumbnail.text_overlay = text_overlay;
+
+    thumbnail.prompt_used = result.prompt_used;
+    thumbnail.image_url = result.image_url;
+    thumbnail.public_id = result.public_id;
+    thumbnail.isGenerating = false;
+
+    await thumbnail.save();
+
+    return res.status(200).json({
+      message: "Thumbnail updated successfully.",
+      thumbnail,
+    });
+  } catch (error: any) {
+    console.error(error);
+
+    // Prevent thumbnail from getting stuck in generating state
+    if (thumbnail) {
+      try {
+        thumbnail.isGenerating = false;
+        await thumbnail.save();
+      } catch {}
+    }
+
+    return res.status(500).json({
+      message: error.message || "Internal Server Error",
+    });
+  }
+};
+
+/* ============================================================
    DELETE THUMBNAIL
 ============================================================ */
 
