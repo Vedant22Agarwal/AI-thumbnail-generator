@@ -126,13 +126,15 @@ const Generate = () => {
     if (isLoggedIn && id) {
       fetchThumbnail();
     }
-    if (id && loading && isLoggedIn) {
+
+    if (id && loading && isLoggedIn && !isEditing) {
       const interval = setInterval(() => {
         fetchThumbnail();
-      }, 5000)
+      }, 5000);
+
       return () => clearInterval(interval);
     }
-  }, [id, isLoggedIn, loading])
+  }, [id, isLoggedIn, loading, isEditing]);
 
   useEffect(() => {
     if ((!id) && thumbnail) {
